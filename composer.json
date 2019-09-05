@@ -3,7 +3,7 @@
   "description": "environment",
   "type": "library",
   "require": {
-    "henrik/container": "^1.1"
+    "henrik/container": "^1.1.3"
   },
   "authors": [
     {

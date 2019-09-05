@@ -1,0 +1,21 @@
+{
+  "name": "henrik/environment",
+  "description": "environment",
+  "type": "library",
+  "require": {
+    "henrik/container": "^1.1"
+  },
+  "authors": [
+    {
+      "name": "Henrik Karapetyan",
+      "email": "henrikkarapetyan@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "henrik\\env\\": "src/"
+    }
+  }
+}

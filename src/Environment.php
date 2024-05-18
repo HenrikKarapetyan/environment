@@ -2,9 +2,9 @@
 
 namespace Henrik\Env;
 
-use henrik\container\Container;
-use henrik\container\ContainerModes;
-use henrik\container\exceptions\UndefinedModeException;
+use Henrik\Container\Container;
+use Henrik\Container\ContainerModes;
+use Henrik\Container\Exceptions\UndefinedModeException;
 use Henrik\Env\Exceptions\ConfigurationFileNotFoundException;
 use Henrik\Env\Exceptions\ConfigurationNotExists;
 

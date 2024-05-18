@@ -21,7 +21,8 @@
   "require-dev": {
     "phpmd/phpmd": "^2.15",
     "friendsofphp/php-cs-fixer": "dev-master",
-    "phpstan/phpstan": "2.0.x-dev"
+    "phpstan/phpstan": "2.0.x-dev",
+    "henrik/dependency-injector": "dev-master"
   },
   "scripts": {
     "phpstan": [

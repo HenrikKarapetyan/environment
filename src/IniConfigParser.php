@@ -1,203 +1,233 @@
 <?php
 
+namespace Henrik\Env;
 
-namespace henrik\env;
-
-
-use henrik\env\exceptions\ContextOrIdNotExistsException;
-use henrik\env\exceptions\InvalidConfigSyntaxException;
-use henrik\env\interfaces\ConfigParserInterface;
+use Henrik\Env\Exceptions\ContextOrIdNotExistsException;
+use Henrik\Env\Exceptions\FileNotExistsException;
+use Henrik\Env\Exceptions\InvalidConfigSyntaxException;
 
 /**
- * Class IniConfigParser
- * @package henrik\env\parsers
+ * Class IniConfigParser.
  */
 class IniConfigParser implements ConfigParserInterface
 {
     /**
      * @var string
      */
-    private $default_context = 'default';
+    private string $defaultContext = 'default';
     /**
      * @var string
      */
-    private $context;
+    private string $context;
     /**
      * @var bool
-     * If set to TRUE, it returns is a multidimensional array with
-     * section names and settings included. Default is FALSE
+     *           If set to TRUE, it returns is a multidimensional array with
+     *           section names and settings included. Default is FALSE
+     *
      * @default value true
      */
-    private $process_sections = true;
+    private bool $processSections = true;
     /**
      * @var int
-     * Available modes
-     * INI_SCANNER_NORMAL (default)
-     * INI_SCANNER_RAW (means option values will not be parsed)
-     * INI_SCANNER_TYPED (means that boolean, null and integer types are preserved when possible. "true",
-     *      "on", "yes" are converted to TRUE. "false", "off", "no", "none" are converted to FALSE.
-     *      "null" is converted to NULL. Numeric strings are converted to integer type if possible)
+     *          Available modes
+     *          INI_SCANNER_NORMAL (default)
+     *          INI_SCANNER_RAW (means option values will not be parsed)
+     *          INI_SCANNER_TYPED (means that boolean, null and integer types are preserved when possible. "true",
+     *          "on", "yes" are converted to TRUE. "false", "off", "no", "none" are converted to FALSE.
+     *          "null" is converted to NULL. Numeric strings are converted to integer type if possible)
+     *
      * @default value INI_SCANNER_TYPED
      */
-    private $scanner_mode = INI_SCANNER_TYPED;
+    private int $scannerMode = INI_SCANNER_TYPED;
 
     /**
      * @param $file
-     * @return array|mixed
-     * @throws InvalidConfigSyntaxException
+     *
+     * @throws FileNotExistsException
+     * @throws InvalidConfigSyntaxException|ContextOrIdNotExistsException
+     *
+     * @return array<string, mixed>
      */
-    public function parse($file)
+    public function parse($file): array
     {
-        $handle = fopen($file, "r");
-        $data = [];
-        $this->context = $this->default_context;
-        while (($line = fgets($handle)) !== false) {
+        $handle        = fopen($file, 'r');
+        $data          = [];
+        $this->context = $this->defaultContext;
 
-            $line = $this->deleteCommentFromLine($line);
-            if ($this->checkIsLineEmpty($line)) {
-                continue;
+        if (is_resource($handle)) {
+            while (($line = fgets($handle)) !== false) {
+
+                $line = $this->deleteCommentFromLine($line);
+
+                if ($this->checkIsLineEmpty($line)) {
+                    continue;
+                }
+                $contextData = $this->checkIsContext($line);
+
+                if (is_array($contextData) && !empty($contextData[0])) {
+                    $this->context = $contextData['key'];
+
+                    continue;
+                }
+
+                $lineData = explode('=', $line);
+
+                if (count($lineData) <= 1) {
+                    throw new InvalidConfigSyntaxException();
+                }
+
+                $value = $this->checkValueAndReturn($data, $lineData[1]);
+
+                $key   = $this->normalizeValue($lineData[0]);
+                $value = $this->normalizeValue($value);
+
+                $data[$this->context][$key] = $value;
+
             }
-            $context_data = $this->checkIsContext($line);
-            if (is_array($context_data) && !empty($context_data[0])) {
-                $this->context = $context_data['key'];
-                continue;
-            }
+            fclose($handle);
 
-            $line_data = explode('=', $line);
-            if (count($line_data) > 1) {
-                $value = $this->checkValueAndReturn($data, $line_data[1]);
-            } else {
-                throw new InvalidConfigSyntaxException();
-            }
-            $key = $this->normalizeValue($line_data[0]);
-            $value = $this->normalizeValue($value);
-
-            $data[$this->context][$key] = $value;
+            return $data;
         }
-        fclose($handle);
-        return $data;
-    }
 
-    /**
-     * @param $line
-     * @return string
-     */
-    private function deleteCommentFromLine($line)
-    {
-        $comment_symbol_pose = strpos($line, ';');
-        if ($comment_symbol_pose || $comment_symbol_pose === 0) {
-            $uncommented_string = substr($line, 0, $comment_symbol_pose);
-            return trim($uncommented_string);
-        }
-        return trim($line);
-    }
-
-    /**
-     * @param $line
-     * @return bool
-     */
-    private function checkIsLineEmpty($line)
-    {
-        $line = trim($line);
-        return empty($line);
-    }
-
-    /**
-     * @param $line
-     * @return mixed
-     */
-    private function checkIsValueIsFromRelatedKey($line)
-    {
-        $pattern = '#\${(?<key>[^}]+)}#ixs';
-        preg_match_all($pattern, $line, $matches);
-        if (!empty($matches[0])) {
-            return $matches;
-        }
-        return $line;
+        throw new FileNotExistsException();
     }
 
     /**
      * @return bool
      */
-    public function isProcessSections()
+    public function isProcessSections(): bool
     {
-        return $this->process_sections;
+        return $this->processSections;
     }
 
     /**
-     * @param bool $process_sections
+     * @param bool $processSections
      */
-    public function setProcessSections($process_sections)
+    public function setProcessSections(bool $processSections): void
     {
-        $this->process_sections = $process_sections;
+        $this->processSections = $processSections;
     }
 
     /**
      * @return int
      */
-    public function getScannerMode()
+    public function getScannerMode(): int
     {
-        return $this->scanner_mode;
+        return $this->scannerMode;
     }
 
     /**
-     * @param int $scanner_mode
+     * @param int $scannerMode
      */
-    public function setScannerMode($scanner_mode)
+    public function setScannerMode(int $scannerMode): void
     {
-        $this->scanner_mode = $scanner_mode;
+        $this->scannerMode = $scannerMode;
     }
 
     /**
-     * @param $line
-     * @return mixed
+     * @param string $line
+     *
+     * @return string
      */
-    private function checkIsContext($line)
+    private function deleteCommentFromLine(string $line): string
     {
-        $pattern = '#\[(?<key>[^}]+)]#ixs';
-        preg_match($pattern, $line, $matches);
-        if ($matches) {
+        $commentSymbolPose = strpos($line, ';');
+
+        if ($commentSymbolPose || $commentSymbolPose === 0) {
+            $uncommentedString = substr($line, 0, $commentSymbolPose);
+
+            return trim($uncommentedString);
+        }
+
+        return trim($line);
+    }
+
+    /**
+     * @param string $line
+     *
+     * @return bool
+     */
+    private function checkIsLineEmpty(string $line): bool
+    {
+        $line = trim($line);
+
+        return empty($line);
+    }
+
+    /**
+     * @param string $line
+     *
+     * @return string[]|string
+     */
+    private function checkIsValueIsFromRelatedKey(string $line): array|string
+    {
+        $pattern = '#\${(?<key>[^}]+)}#ixs';
+        preg_match_all($pattern, $line, $matches);
+
+        if (!empty($matches[0])) {
             return $matches;
         }
+
         return $line;
     }
 
     /**
-     * @param $value
-     * @return mixed|string
+     * @param string $line
+     *
+     * @return string|string[]
      */
-    private function normalizeValue($value)
+    private function checkIsContext(string $line): array|string
     {
-        $new_value = str_replace('"', '', $value);
-        $new_value = trim($new_value);
-        return $new_value;
+        $pattern = '#\[(?<key>[^}]+)]#ixs';
+        preg_match($pattern, $line, $matches);
+
+        if ($matches) {
+            return $matches;
+        }
+
+        return $line;
     }
 
     /**
-     * @param $data
-     * @param $value_part
-     * @return mixed|string
+     * @param string $value
+     *
+     * @return string
      */
-    private function checkValueAndReturn($data, $value_part)
+    private function normalizeValue(string $value): string
     {
-        $value = "";
-        $res = $this->checkIsValueIsFromRelatedKey($value_part);
+        return trim(str_replace('"', '', $value));
+    }
+
+    /**
+     * @param array  $data
+     * @param string $valuePart
+     *
+     * @throws ContextOrIdNotExistsException
+     *
+     * @return mixed
+     */
+    private function checkValueAndReturn(array $data, string $valuePart): mixed
+    {
+        $res   = $this->checkIsValueIsFromRelatedKey($valuePart);
+        $value = $res;
+
         if (is_array($res)) {
-            $res_assoc_array = array_combine($res[0], $res['key']);
-            foreach ($res_assoc_array as $key => $value) {
-                $context_with_id_array = explode(':', $value);
-                if (count($context_with_id_array) > 1) {
-                    $context = $context_with_id_array[0];
-                    $id = $context_with_id_array[1];
-                    if (isset($data[$context]) && isset($data[$context][$id]))
-                        $rel_id_value = $data[$context][$id];
-                    else
+            $resultFromAssocArray = array_combine($res[0], $res['key']);
+
+            foreach ($resultFromAssocArray as $key => $value) {
+                $contextWithIdArray = explode(':', $value);
+
+                if (count($contextWithIdArray) > 1) {
+                    $context = $contextWithIdArray[0];
+                    $id      = $contextWithIdArray[1];
+
+                    if (!isset($data[$context], $data[$context][$id])) {
                         throw new ContextOrIdNotExistsException();
-                    $value = str_replace($key, $rel_id_value, $value_part);
+                    }
+                    $relIdValue = $data[$context][$id];
+                    $value      = str_replace($key, $relIdValue, $valuePart);
                 }
             }
-        } else {
-            $value = $res;
         }
 
         return $value;

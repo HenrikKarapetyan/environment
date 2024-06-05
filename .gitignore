@@ -6,3 +6,5 @@ phpmd-report.html
 .php-cs-fixer.cache
 
 public
+.phpunit.result.cache
+.phpunit.cache

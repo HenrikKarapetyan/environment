@@ -3,7 +3,8 @@
   "description": "environment",
   "type": "library",
   "require": {
-    "henrik/container": "dev-master"
+    "henrik/container": "dev-master",
+    "henrik/contracts": "dev-main"
   },
   "authors": [
     {
@@ -18,11 +19,18 @@
       "Henrik\\Env\\": "src/"
     }
   },
+
+  "autoload-dev": {
+    "psr-4": {
+      "Henrik\\Env\\Test\\": "tests/"
+    }
+  },
   "require-dev": {
     "phpmd/phpmd": "^2.15",
-    "friendsofphp/php-cs-fixer": "dev-master",
+    "friendsofphp/php-cs-fixer": "v3.57.2",
     "phpstan/phpstan": "2.0.x-dev",
-    "henrik/dependency-injector": "dev-master"
+    "henrik/dependency-injector": "dev-master",
+    "phpunit/phpunit": "^11.2@dev"
   },
   "scripts": {
     "phpstan": [

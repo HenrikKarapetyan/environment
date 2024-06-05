@@ -32,5 +32,9 @@ class EnvironmentTest extends TestCase
         $this->assertEquals('/../var/logs/', $env->get('parameters')['logsSaveDirectory']);
 
         $this->assertEquals(['Core','Entity','Repository'], $env->get('parameters')['serviceExcludedPaths']);
+
+
+        $env->load(__DIR__.'/stubs/prod.env.ini');
+        $this->assertEquals('prod', $env->get('app')['env']);
     }
 }

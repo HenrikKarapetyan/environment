@@ -19,7 +19,7 @@ class EnvironmentTest extends TestCase
         $iniConfigParser = new IniEnvironmentParser();
         $env             = new Environment($iniConfigParser);
 
-        $env->load(__DIR__.'/stubs/simple.ini');
+        $env->load(__DIR__ . '/stubs/env.ini');
 
         $this->assertEquals('dev', $env->get('app')['env']);
         $this->assertEquals(['dev','prod','local'], $env->get('app')['environments']);
@@ -35,6 +35,7 @@ class EnvironmentTest extends TestCase
 
 
         $env->load(__DIR__.'/stubs/prod.env.ini');
+
         $this->assertEquals('prod', $env->get('app')['env']);
     }
 }

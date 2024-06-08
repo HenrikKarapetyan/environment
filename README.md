@@ -1,4 +1,4 @@
-# Envoronment
+# Environment
 
 The basic usage of library
 
@@ -30,7 +30,7 @@ Hk\App\FignyaInterface = \Hk\App\Fignya
 
 $iniConfigParser = new IniEnvironmentParser();
 $env             = new Environment($iniConfigParser);
-$env->load(__DIR__.'/stubs/simple.ini');
+$env->load(__DIR__.'/stubs/env.ini');
 
 //here parameters is our section name 
 //get method returns array of parameters in this point

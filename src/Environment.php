@@ -62,11 +62,10 @@ class Environment extends Container implements EnvironmentInterface
             $data = $this->configParser->parse($file);
 
             if ($data) {
-                $this->data = array_merge_recursive($data, $this->data);
+                $this->data = array_merge($this->data, $data);
             }
 
             $this->changeMode(ContainerModes::MULTIPLE_VALUE_MODE);
-            $this->data = $data;
         } catch (ConfigurationFileNotFoundException $e) {
             echo $e->getMessage();
         }

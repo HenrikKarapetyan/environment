@@ -11,6 +11,7 @@ use Henrik\Contracts\Environment\EnvironmentInterface;
 use Henrik\Contracts\Environment\EnvironmentParserInterface;
 use Henrik\Env\Exceptions\ConfigurationFileNotFoundException;
 use Henrik\Env\Exceptions\KeyTypeErrorException;
+use Henrik\Env\Exceptions\UndefinedIdException;
 
 /**
  * Class Environment.
@@ -43,6 +44,18 @@ class Environment extends Container implements EnvironmentInterface
 
     public function get(string $id, mixed $default = null): mixed
     {
+        if (str_contains($id, '.')) {
+            $idParts            = explode('.', $id);
+            $segmentName        = array_shift($idParts);
+            $valueFromContainer = parent::get($segmentName);
+
+            if (is_array($valueFromContainer)) {
+
+                return $this->getValueFromArray($valueFromContainer, $idParts);
+            }
+
+        }
+
         if ($this->has($id)) {
             return parent::get($id);
         }
@@ -129,5 +142,27 @@ class Environment extends Container implements EnvironmentInterface
         if (!file_exists($file)) {
             throw new ConfigurationFileNotFoundException("Your configuration file doesn't exists");
         }
+    }
+
+    /**
+     * @param array<string, mixed> $valueFromContainer
+     * @param array<string>        $idParts
+     *
+     * @throws UndefinedIdException
+     */
+    private function getValueFromArray(array $valueFromContainer, array $idParts): mixed
+    {
+        $id = array_shift($idParts);
+
+        if (isset($valueFromContainer[$id])) {
+
+            if (is_array($valueFromContainer[$id]) && !empty($idParts)) {
+                return $this->getValueFromArray($valueFromContainer[$id], $idParts);
+            }
+
+            return $valueFromContainer[$id];
+        }
+
+        throw new UndefinedIdException((string) $id);
     }
 }

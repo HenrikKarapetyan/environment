@@ -9,19 +9,19 @@ $finder = (new Finder())
 
 return (new Config())
     ->setRules([
-        '@PhpCsFixer' => true,
+        '@PhpCsFixer'     => true,
         '@PHP82Migration' => true,
 
-        'blank_line_after_namespace' => true,
-        'single_import_per_statement' => true,
-        'single_line_after_imports' => true,
-        'no_unused_imports' => true,
+        'blank_line_after_namespace'             => true,
+        'single_import_per_statement'            => true,
+        'single_line_after_imports'              => true,
+        'no_unused_imports'                      => true,
         'multiline_whitespace_before_semicolons' => false,
-        'phpdoc_to_comment' => false,
+        'phpdoc_to_comment'                      => false,
 
-        'ordered_imports' => true,
+        'ordered_imports'         => true,
         'global_namespace_import' => true,
-        'ordered_class_elements' => [
+        'ordered_class_elements'  => [
             'order' => [
                 'use_trait',
                 'constant',
@@ -48,28 +48,28 @@ return (new Config())
         ],
 
         'php_unit_test_class_requires_covers' => false,
-        'method_chaining_indentation' => false,
-        'php_unit_internal_class' => false,
+        'method_chaining_indentation'         => false,
+        'php_unit_internal_class'             => false,
 
         'self_static_accessor' => true,
 
         'ternary_to_null_coalescing' => true,
-        'binary_operator_spaces' => [
-            'default' => 'single_space',
+        'binary_operator_spaces'     => [
+            'default'   => 'single_space',
             'operators' => [
-                '=' => 'align_single_space_minimal',
-                '+=' => 'align_single_space_minimal',
-                '-=' => 'align_single_space_minimal',
-                '/=' => 'align_single_space_minimal',
-                '*=' => 'align_single_space_minimal',
-                '%=' => 'align_single_space_minimal',
+                '='   => 'align_single_space_minimal',
+                '+='  => 'align_single_space_minimal',
+                '-='  => 'align_single_space_minimal',
+                '/='  => 'align_single_space_minimal',
+                '*='  => 'align_single_space_minimal',
+                '%='  => 'align_single_space_minimal',
                 '**=' => 'align_single_space_minimal',
-                '=>' => 'align_single_space_minimal',
+                '=>'  => 'align_single_space_minimal',
             ],
         ],
         'yoda_style' => [
-            'equal' => false,
-            'identical' => false,
+            'equal'            => false,
+            'identical'        => false,
             'less_and_greater' => null,
         ],
         'concat_space' => [
@@ -78,34 +78,34 @@ return (new Config())
         'array_syntax' => [
             'syntax' => 'short',
         ],
-        'single_space_around_construct' => true,
-        'control_structure_braces' => true,
+        'single_space_around_construct'           => true,
+        'control_structure_braces'                => true,
         'control_structure_continuation_position' => true,
-        'declare_parentheses' => true,
-        'statement_indentation' => true,
-        'no_multiple_statements_per_line' => true,
-        'no_extra_blank_lines' => true,
-        'elseif' => true,
-        'trim_array_spaces' => true,
+        'declare_parentheses'                     => true,
+        'statement_indentation'                   => true,
+        'no_multiple_statements_per_line'         => true,
+        'no_extra_blank_lines'                    => true,
+        'elseif'                                  => true,
+        'trim_array_spaces'                       => true,
 
-        'function_declaration' => true,
+        'function_declaration'          => true,
         'no_spaces_after_function_name' => true,
-        'spaces_inside_parentheses' => true,
+        'spaces_inside_parentheses'     => true,
 
-        'cast_spaces' => true,
-        'encoding' => true,
-        'full_opening_tag' => true,
+        'cast_spaces'                 => true,
+        'encoding'                    => true,
+        'full_opening_tag'            => true,
         'linebreak_after_opening_tag' => true,
-        'no_closing_tag' => true,
-        'indentation_type' => true,
-        'line_ending' => true,
-        'single_blank_line_at_eof' => false,
-        'no_trailing_whitespace' => true,
-        'lowercase_keywords' => true,
+        'no_closing_tag'              => true,
+        'indentation_type'            => true,
+        'line_ending'                 => true,
+        'single_blank_line_at_eof'    => false,
+        'no_trailing_whitespace'      => true,
+        'lowercase_keywords'          => true,
         'no_whitespace_in_blank_line' => true,
-        'echo_tag_syntax' => true,
+        'echo_tag_syntax'             => true,
 
-        'doctrine_annotation_braces' => false,
+        'doctrine_annotation_braces'           => false,
         'doctrine_annotation_array_assignment' => [
             'operator' => '=',
         ],
@@ -114,14 +114,14 @@ return (new Config())
             'comment_type' => 'all_multiline',
         ],
 
-        'no_superfluous_phpdoc_tags' => false,
-        'phpdoc_order' => true,
-        'phpdoc_separation' => true,
-        'phpdoc_var_without_name' => false,
-        'phpdoc_no_empty_return' => false,
+        'no_superfluous_phpdoc_tags'          => false,
+        'phpdoc_order'                        => true,
+        'phpdoc_separation'                   => true,
+        'phpdoc_var_without_name'             => false,
+        'phpdoc_no_empty_return'              => false,
         'phpdoc_var_annotation_correct_order' => true,
-        'phpdoc_types_order' => [
-            'sort_algorithm' => 'none',
+        'phpdoc_types_order'                  => [
+            'sort_algorithm'  => 'none',
             'null_adjustment' => 'always_last',
         ],
 

@@ -163,6 +163,6 @@ class Environment extends Container implements EnvironmentInterface
             return $valueFromContainer[$id];
         }
 
-        throw new UndefinedIdException((string) $id);
+        return null;
     }
 }

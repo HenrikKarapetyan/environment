@@ -8,3 +8,4 @@ phpmd-report.html
 public
 .phpunit.result.cache
 .phpunit.cache
+coverage

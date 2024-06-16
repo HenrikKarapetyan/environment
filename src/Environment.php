@@ -6,6 +6,8 @@ namespace Henrik\Env;
 
 use Henrik\Container\Container;
 use Henrik\Container\ContainerModes;
+use Henrik\Container\Exceptions\KeyAlreadyExistsException;
+use Henrik\Container\Exceptions\KeyNotFoundException;
 use Henrik\Container\Exceptions\UndefinedModeException;
 use Henrik\Contracts\Environment\EnvironmentInterface;
 use Henrik\Contracts\Environment\EnvironmentParserInterface;
@@ -42,6 +44,13 @@ class Environment extends Container implements EnvironmentInterface
         $this->data[$name] = $value;
     }
 
+    /**
+     * @param string     $id
+     * @param mixed|null $default
+     *
+     * @throws KeyNotFoundException
+     * @throws UndefinedIdException
+     */
     public function get(string $id, mixed $default = null): mixed
     {
         if (str_contains($id, '.')) {
@@ -84,12 +93,11 @@ class Environment extends Container implements EnvironmentInterface
         }
     }
 
-    // TODO delete  naxer
-    public function printData(): void
-    {
-        var_dump($this->data);
-    }
-
+    /**
+     * @param mixed $offset
+     * @return bool
+     * @throws KeyTypeErrorException
+     */
     public function offsetExists(mixed $offset): bool
     {
         if (is_string($offset)) {
@@ -99,6 +107,12 @@ class Environment extends Container implements EnvironmentInterface
         throw new KeyTypeErrorException(gettype($offset));
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws KeyNotFoundException
+     * @throws KeyTypeErrorException
+     * @throws UndefinedIdException
+     */
     public function offsetGet(mixed $offset): mixed
     {
         if (is_string($offset)) {
@@ -108,6 +122,11 @@ class Environment extends Container implements EnvironmentInterface
         throw new KeyTypeErrorException(gettype($offset));
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws KeyTypeErrorException
+     * @throws KeyAlreadyExistsException
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
 

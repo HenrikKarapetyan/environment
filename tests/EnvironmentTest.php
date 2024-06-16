@@ -1,10 +1,13 @@
 <?php
+declare(strict_types=1);
 
 namespace Henrik\Env\Test;
 
 use Henrik\Container\Exceptions\KeyNotFoundException;
 use Henrik\Container\Exceptions\UndefinedModeException;
 use Henrik\Env\Environment;
+use Henrik\Env\Exceptions\ConfigurationFileNotFoundException;
+use Henrik\Env\Exceptions\UndefinedIdException;
 use Henrik\Env\IniEnvironmentParser;
 use PHPUnit\Framework\TestCase;
 
@@ -13,8 +16,9 @@ class EnvironmentTest extends TestCase
     /**
      * @throws KeyNotFoundException
      * @throws UndefinedModeException
+     * @throws UndefinedIdException
      */
-    public function testEnvironment(): void
+    public function testEnvironmentValues(): void
     {
         $iniConfigParser = new IniEnvironmentParser();
         $env             = new Environment($iniConfigParser);
@@ -34,5 +38,17 @@ class EnvironmentTest extends TestCase
         $env->load(__DIR__ . '/stubs/prod.env.ini');
 
         $this->assertEquals('prod', $env->get('app.env'));
+    }
+
+    /**
+     * @throws UndefinedModeException
+     */
+    public function testBadFilePath(): void
+    {
+        $iniConfigParser = new IniEnvironmentParser();
+        $env             = new Environment($iniConfigParser);
+
+        $this->expectException(ConfigurationFileNotFoundException::class);
+        $env->load(__DIR__ . '/stubs/env2.ini');
     }
 }

@@ -4,7 +4,8 @@
   "type": "library",
   "require": {
     "henrik/container": "dev-master",
-    "henrik/contracts": "dev-main"
+    "henrik/contracts": "dev-main",
+    "henrik/cache": "dev-main"
   },
   "authors": [
     {
@@ -48,6 +49,10 @@
     "phpmd-html": [
       "Composer\\Config::disableProcessTimeout",
       "./vendor/bin/phpmd ./src html ./phpmd.xml > phpmd-report.html"
+    ],
+    "test": [
+      "Composer\\Config::disableProcessTimeout",
+      "./vendor/bin/phpunit --coverage-html=coverage"
     ]
   }
 }

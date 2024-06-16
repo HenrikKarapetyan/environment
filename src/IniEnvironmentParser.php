@@ -18,6 +18,8 @@ class IniEnvironmentParser implements EnvironmentParserInterface
     private array $data = [];
 
     /**
+     * @param mixed $file
+     *
      * @throws ContextOrIdNotExistsException
      */
     public function parse($file): array

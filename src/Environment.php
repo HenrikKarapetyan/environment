@@ -95,8 +95,10 @@ class Environment extends Container implements EnvironmentInterface
 
     /**
      * @param mixed $offset
-     * @return bool
+     *
      * @throws KeyTypeErrorException
+     *
+     * @return bool
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -109,6 +111,7 @@ class Environment extends Container implements EnvironmentInterface
 
     /**
      * {@inheritDoc}
+     *
      * @throws KeyNotFoundException
      * @throws KeyTypeErrorException
      * @throws UndefinedIdException
@@ -124,6 +127,7 @@ class Environment extends Container implements EnvironmentInterface
 
     /**
      * {@inheritDoc}
+     *
      * @throws KeyTypeErrorException
      * @throws KeyAlreadyExistsException
      */

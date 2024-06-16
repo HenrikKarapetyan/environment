@@ -17,6 +17,9 @@ class IniEnvironmentParser implements EnvironmentParserInterface
      */
     private array $data = [];
 
+    /**
+     * @throws ContextOrIdNotExistsException
+     */
     public function parse($file): array
     {
         $parsedData = parse_ini_file($file, true, INI_SCANNER_RAW);

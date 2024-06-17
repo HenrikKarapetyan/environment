@@ -17,23 +17,29 @@ class IniEnvironmentParser implements EnvironmentParserInterface
      */
     private array $data = [];
 
+    private bool $processSections = true;
+
+    private int $scannerMode = INI_SCANNER_RAW;
+
     /**
-     * @param mixed $file
+     * @param string $file
      *
      * @throws ContextOrIdNotExistsException
+     *
+     * @return array<string, array<string, mixed>>
      */
-    public function parse($file): array
+    public function parse(string $file): array
     {
-        $parsedData = parse_ini_file($file, true, INI_SCANNER_RAW);
+        $parsedData = parse_ini_file($file, $this->isProcessSections(), $this->getScannerMode());
 
-        if (is_array($parsedData)) {
-            $this->data = $parsedData;
+        if ($parsedData) {
+            $this->setData($parsedData);
 
-            foreach ($this->data as $section => $params) {
-                $this->data[$section] = $this->detectVariablesAndNormalizeValues($params);
+            foreach ($this->getData() as $section => $params) {
+                $this->getData()[$section] = $this->detectVariablesAndNormalizeValues($params);
             }
 
-            return $this->data;
+            return $this->getData();
         }
 
         return [];
@@ -76,6 +82,44 @@ class IniEnvironmentParser implements EnvironmentParserInterface
         }
 
         return $value;
+    }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function &getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array<string, array<string, mixed>> $data
+     *
+     * @return void
+     */
+    public function setData(array $data): void
+    {
+        $this->data = $data;
+    }
+
+    public function isProcessSections(): bool
+    {
+        return $this->processSections;
+    }
+
+    public function setProcessSections(bool $processSections): void
+    {
+        $this->processSections = $processSections;
+    }
+
+    public function getScannerMode(): int
+    {
+        return $this->scannerMode;
+    }
+
+    public function setScannerMode(int $scannerMode): void
+    {
+        $this->scannerMode = $scannerMode;
     }
 
     /**

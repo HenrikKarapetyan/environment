@@ -30,8 +30,9 @@
     "phpmd/phpmd": "^2.15",
     "friendsofphp/php-cs-fixer": "v3.57.2",
     "phpstan/phpstan": "2.0.x-dev",
-    "henrik/dependency-injector": "dev-master",
-    "phpunit/phpunit": "^11.2@dev"
+    "phpunit/phpunit": "^11.2@dev",
+    "phpunit/php-code-coverage": "^11.0@dev"
+
   },
   "scripts": {
     "phpstan": [
@@ -52,7 +53,7 @@
     ],
     "test": [
       "Composer\\Config::disableProcessTimeout",
-      "./vendor/bin/phpunit --coverage-html=coverage"
+      "./vendor/bin/phpunit --coverage-html=coverage --testdox"
     ]
   }
 }

@@ -1,13 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Henrik\Env\Test;
 
 use Henrik\Container\Exceptions\KeyNotFoundException;
-use Henrik\Container\Exceptions\UndefinedModeException;
 use Henrik\Env\Environment;
 use Henrik\Env\Exceptions\ConfigurationFileNotFoundException;
-use Henrik\Env\Exceptions\UndefinedIdException;
+use Henrik\Env\Exceptions\KeyTypeErrorException;
 use Henrik\Env\IniEnvironmentParser;
 use PHPUnit\Framework\TestCase;
 
@@ -15,8 +15,7 @@ class EnvironmentTest extends TestCase
 {
     /**
      * @throws KeyNotFoundException
-     * @throws UndefinedModeException
-     * @throws UndefinedIdException
+     * @throws ConfigurationFileNotFoundException
      */
     public function testEnvironmentValues(): void
     {
@@ -40,15 +39,56 @@ class EnvironmentTest extends TestCase
         $this->assertEquals('prod', $env->get('app.env'));
     }
 
-    /**
-     * @throws UndefinedModeException
-     */
     public function testBadFilePath(): void
+    {
+        $this->expectException(ConfigurationFileNotFoundException::class);
+
+        $iniConfigParser = new IniEnvironmentParser();
+        $env             = new Environment($iniConfigParser);
+
+        $env->load(__DIR__ . '/stubs/env2.ini');
+    }
+
+    public function testArrayAccessForEnvironment(): void
     {
         $iniConfigParser = new IniEnvironmentParser();
         $env             = new Environment($iniConfigParser);
 
-        $this->expectException(ConfigurationFileNotFoundException::class);
-        $env->load(__DIR__ . '/stubs/env2.ini');
+        $env->load(__DIR__ . '/stubs/env.ini');
+
+        $this->assertTrue(isset($env['app']));
+        $this->assertIsArray($env['app']);
+
+        unset($env['app']);
+
+        $this->assertFalse(isset($env['app']));
+        $this->assertEmpty($env['app']);
+
+        $dataArray  = ['name' => 'developer', 'lastname' => 'developer'];
+        $env['app'] = $dataArray;
+        $this->assertEquals($dataArray, $env['app']);
+
+        $this->expectException(KeyTypeErrorException::class);
+        $val = $env[1];
+        $this->assertNull($val);
     }
+
+    /**
+     * @throws KeyNotFoundException
+     * @throws ConfigurationFileNotFoundException
+     */
+    public function testGetEnvironmentValueByMultiPartId(): void
+    {
+        $iniConfigParser = new IniEnvironmentParser();
+        $env             = new Environment($iniConfigParser);
+
+        $env->load(__DIR__ . '/stubs/env.ini');
+        $this->assertEquals('dev', $env->get('app.env'));
+        $this->assertEquals(['dev', 'prod', 'local'], $env->get('app.environments'));
+        $this->assertEquals('dev', $env->get('app.environments.0'));
+        $this->assertEquals('prod', $env->get('app.environments.1'));
+        $this->assertEquals('local', $env->get('app.environments.2'));
+        $this->assertEquals(null, $env->get('app.environments.3'));
+    }
+
 }
